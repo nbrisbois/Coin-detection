@@ -1,0 +1,169 @@
+function varargout = CoinGUI(varargin)
+% COINGUI MATLAB code for CoinGUI.fig
+%      COINGUI, by itself, creates a new COINGUI or raises the existing
+%      singleton*.
+%
+%      H = COINGUI returns the handle to a new COINGUI or the handle to
+%      the existing singleton*.
+%
+%      COINGUI('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in COINGUI.M with the given input arguments.
+%
+%      COINGUI('Property','Value',...) creates a new COINGUI or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before CoinGUI_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to CoinGUI_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help CoinGUI
+
+% Last Modified by GUIDE v2.5 25-Nov-2019 15:16:32
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @CoinGUI_OpeningFcn, ...
+                   'gui_OutputFcn',  @CoinGUI_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before CoinGUI is made visible.
+function CoinGUI_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to CoinGUI (see VARARGIN)
+
+% Choose default command line output for CoinGUI
+handles.output = hObject;
+
+% Update handles structure
+guidata(hObject, handles);
+
+% UIWAIT makes CoinGUI wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = CoinGUI_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+I = im2double(imread('MixedCoins.jpg'));
+I = lin2rgb(I);
+I = imresize(I, 0.25);
+
+I = imcomplement(I);
+
+
+[centers, radii] = imfindcircles(I, [10 100]);
+numOfCoin = length(radii());
+tempCen = centers;
+numPen = 0;
+numQua = 0;
+numDim = 0;
+numNic = 0;
+penAve = 1;
+
+for c = 1: numOfCoin
+    corner = round(radii(c)/sqrt(2));
+    cop = 0;
+    scan = 0;
+    greAve = 0;
+    redAve = 0;
+    for i = round(centers(c, 1)) - corner:round(centers(c, 1)) + corner
+        for j = round(centers(c, 2)) - corner: round(centers(c, 2)) + corner            
+            scan = scan + 1;
+            greAve = greAve + I(j, i, 3);
+            redAve = redAve + I(j, i, 1);
+        end
+    end
+    greAve = greAve/power(corner*2+1,2);
+    redAve = redAve/power(corner*2+1,2);
+    if((greAve-redAve)>.12)
+        numPen = numPen + 1;
+        penAve = penAve + radii(c);
+        tempCen(c, 1) = 0;
+        tempCen(c, 2) = 0;
+    end
+end
+if(numPen > 0) 
+    penAve = penAve/numPen;
+
+    for c = 1: numOfCoin
+        if(tempCen(c, 1) > 0 || tempCen(c, 2) > 0)
+            if((penAve*1.2735)*.94 < radii(c) && (penAve*1.2735)*1.2 > radii(c))
+                numQua = numQua + 1;
+            elseif((penAve*1.1134)*.95 < radii(c) && (penAve*1.1134)*1.05 > radii(c))
+                numNic = numNic + 1;
+            elseif((penAve*.9402)*.8 < radii(c) && (penAve*.9402)*1.05 > radii(c))
+                numDim = numDim + 1;
+            else
+                class = ImgMatch(I, radii(c), centers(c, 1), centers(c,2));
+            end
+        end
+    end
+    total = (numPen*.01) + (numNic*.05) + (numDim*.1) + (numQua*.25);
+else
+    
+end
+
+I = imcomplement(I);
+imshow(I);
+viscircles(centers, radii, 'EdgeColor', 'r');
+
+
+function[classification] = ImgMatch(img, radii, x, y)
+    corner = round(radii/sqrt(2));
+    segment = zeros(corner*2+1, corner*2+1, 3, 'double');
+    i1 = 1;
+    for i = round(x) - corner:round(x) + corner
+        j1 = 1;
+        for j = round(y) - corner: round(y) + corner            
+            segment(i1,j1, :) = img(j,i,:);
+            j1 = j1 + 1;
+        end
+        i1 = i1 + 1;
+    end
+    nikTail = imread('Nickletail.jpg');
+%    count = matchFeatures(segment, nikTail);
+    classification = 1;
+
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+a=imread('MixedCoins.JPG'); %***INPUT THE ORIGINAL COIN IMAGE HERE***
+imshow(a);
