@@ -1,3 +1,3 @@
 #### READ ME
 
-#Place .fig file in same directory as .m file.
+## Place .fig file in same directory as .m file.
