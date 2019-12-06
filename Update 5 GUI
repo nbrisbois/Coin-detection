@@ -115,8 +115,8 @@ I = imresize(I, 0.25);
 
 I = imcomplement(I);
 
-
-[centers, radii] = imfindcircles(I, [5 200]);
+R = imbinarize(rgb2gray(I));
+[centers, radii] = imfindcircles(R, [5 200]);
 numOfCoin = length(radii());
 tempCen = centers;
 numPen = 0;
