@@ -185,19 +185,17 @@ set(handles.text4,'String',c);
 set(handles.text5,'String',d);
 set(handles.text6,'String',e);
 
-
-%function[classification] = ImgMatch(img, radii, x, y)
-%    corner = round(radii/sqrt(2));
-%    segment = zeros(corner*2+1, corner*2+1, 3, 'double');
-%    i1 = 1;
-%    for i = round(x) - corner:round(x) + corner
-%        j1 = 1;
-%        for j = round(y) - corner: round(y) + corner            
-%            segment(i1,j1, :) = img(j,i,:);
-%            j1 = j1 + 1;
-%        end
-%        i1 = i1 + 1;
-%    end
-%    nikTail = imread('Nickletail.jpg');
-%    classification = 1;
-%end
+function[classification] = ImgMatch(img, radii, x, y)
+    corner = round(radii/sqrt(2));
+    segment = zeros(corner*2+1, corner*2+1, 3, 'double');
+    i1 = 1;
+    for i = round(x) - corner:round(x) + corner
+        j1 = 1;
+        for j = round(y) - corner: round(y) + corner            
+            segment(i1,j1, :) = img(j,i,:);
+            j1 = j1 + 1;
+        end
+        i1 = i1 + 1;
+    end
+    nikTail = imread('Nickletail.jpg');
+    classification = 1;
