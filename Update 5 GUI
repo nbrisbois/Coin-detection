@@ -153,18 +153,21 @@ for c = 1: numOfCoin
         tempCen(c, 2) = 0;
     end
 end
-penAve = penAve/numPen;
 
-for c = 1: numOfCoin
-    if(tempCen(c, 1) > 0 || tempCen(c, 2) > 0)
-        if((penAve*1.2735)*.94 < radii(c) && (penAve*1.2735)*1.2 > radii(c))
-            numQua = numQua + 1;
-        elseif((penAve*1.1134)*.95 < radii(c) && (penAve*1.1134)*1.05 > radii(c))
-            numNic = numNic + 1;
-        elseif((penAve*.9402)*.8 < radii(c) && (penAve*.9402)*1.05 > radii(c))
-            numDim = numDim + 1;
-        else
-            break;
+if(numPen > 0) 
+    penAve = penAve/numPen;
+
+    for c = 1: numOfCoin
+        if(tempCen(c, 1) > 0 || tempCen(c, 2) > 0)
+            if((penAve*1.2735)*.94 < radii(c) && (penAve*1.2735)*1.2 > radii(c))
+                numQua = numQua + 1;
+            elseif((penAve*1.1134)*.95 < radii(c) && (penAve*1.1134)*1.05 > radii(c))
+                numNic = numNic + 1;
+            elseif((penAve*.9402)*.8 < radii(c) && (penAve*.9402)*1.05 > radii(c))
+                numDim = numDim + 1;
+            else
+               break;
+            end
         end
     end
 end
