@@ -115,11 +115,7 @@ I = imresize(I, 0.25);
 
 I = imcomplement(I);
 
-R = imbinarize(rgb2gray(I));
-se1 = strel('disk', 3);
-R = imdilate(R, se1);
-R = imerode(R, se1);
-[centers, radii] = imfindcircles(R, [5 200]);
+[centers, radii] = imfindcircles(I, [3 200]);
 numOfCoin = length(radii());
 tempCen = centers;
 numPen = 0;
@@ -159,14 +155,14 @@ if(numPen > 0)
 
     for c = 1: numOfCoin
         if(tempCen(c, 1) > 0 || tempCen(c, 2) > 0)
-            if((penAve*1.2735)*.94 < radii(c) && (penAve*1.2735)*1.2 > radii(c))
+            if((penAve*1.2735)*.8655 < radii(c))
                 numQua = numQua + 1;
             elseif((penAve*1.1134)*.95 < radii(c) && (penAve*1.1134)*1.05 > radii(c))
                 numNic = numNic + 1;
-            elseif((penAve*.9402)*.8 < radii(c) && (penAve*.9402)*1.05 > radii(c))
+            elseif((penAve*.9402)*1.05 > radii(c))
                 numDim = numDim + 1;
             else
-               break;
+               numNic = numNic + 1;
             end
         end
     end
@@ -200,5 +196,6 @@ function[classification] = ImgMatch(img, radii, x, y)
         end
         i1 = i1 + 1;
     end
-    nikTail = imread('Nickletail.jpg');
-    classification = 1;
+    array = zeros(6, 2);
+    index = 1;
+    classification = index;
