@@ -166,6 +166,17 @@ if(numPen > 0)
             end
         end
     end
+else
+    for c = 1: numOfCoin
+        class = ImgMatch(I, radii(c), centers(c, 1), centers(c, 2))
+        if(class == 1 || class == 2)
+            numQua = numQua + 1;
+        elseif(class == 3 || class == 4)
+            numNic = numNic + 1;
+        elseif(class == 5 || class == 6)
+            numDim = numDim + 1;
+        end
+    end
 end
 total = (numPen*.01) + (numNic*.05) + (numDim*.1) + (numQua*.25);
 
